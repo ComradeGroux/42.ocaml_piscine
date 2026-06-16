@@ -23,7 +23,7 @@ let ft_print_comb_2 =
 				print_combo (a + 1) 0 (a + 1) 1
 		end else begin
 			print_char '\n'
-		end;
+		end
 	
 	in print_combo 0 0 0 0
 
