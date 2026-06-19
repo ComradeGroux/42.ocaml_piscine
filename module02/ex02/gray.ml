@@ -30,13 +30,15 @@ let gray n =
 	let print_list l =
 		let rec plist l =
 			match l with
-			| first::tail -> print_string first; print_string " "; plist tail
+			| first::second::tail -> print_string first; print_string " "; plist (second::tail)
+			| [first] -> print_string first
 			| _ -> ()
 		in plist l;
 		print_newline ()
 	in print_list (create_gray n)
 
 let () = 
+	gray 0;
 	gray 1;
 	gray 2;
 	gray 3;
