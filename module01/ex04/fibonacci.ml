@@ -2,9 +2,9 @@ let rec fibonacci ?(res1=0) ?(res2=1) n =
 	if n < 0 then
 		-1
 	else
-		if n == 0 then
+		if n = 0 then
 			res1
-		else if n == 1 then
+		else if n = 1 then
 			res2
 		else
 			fibonacci ~res1:res2 ~res2:(res1 + res2) (n - 1) 

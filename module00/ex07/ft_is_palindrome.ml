@@ -33,3 +33,10 @@ let () =
 		print_endline "True"
 	else
 		print_endline "False";
+
+	print_string "\"\": ";
+	if ft_is_palindrome "" == true then
+		print_endline "True"
+	else
+		print_endline "False";
+
