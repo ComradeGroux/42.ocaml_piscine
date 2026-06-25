@@ -1,13 +1,14 @@
 type phosphate = string
 type deoxyribose = string
-type nucleobase = A | T | C | G | None
+type nucleobase = A | T | C | G | U | None
 
 type nucleotide = {
 	phosphate: phosphate;
 	deoxyribose: deoxyribose;
 	nucleobase: nucleobase
 }
-
+	
+type rna = nucleobase list
 type helix = nucleotide list
 
 let string_of_nucleobase nucleobase =
@@ -16,6 +17,7 @@ let string_of_nucleobase nucleobase =
 	| T -> "T"
 	| C -> "C"
 	| G -> "G"
+	| U -> "U"
 	| _ -> "None"
 
 let nucleobase_of_char char =
@@ -24,6 +26,7 @@ let nucleobase_of_char char =
 	| 'T' -> T
 	| 'C' -> C
 	| 'G' -> G
+	| 'U' -> U
 	| _ -> None
 
 let extract_nucleobase nucleotide =
@@ -83,12 +86,37 @@ let helix_to_string helix =
 		| head::tail -> string_of_helixes tail (acc ^ string_of_nucleobase (extract_nucleobase head))
 	in string_of_helixes helix ""
 
+let generate_rna helix =
+	let generate_complementary_nucleobase base =
+		match base with
+		| A -> U
+		| T -> A
+		| C -> G
+		| G -> C
+		| _ -> None
+	in let rec generate helix acc =
+		match helix with
+		| [] -> acc
+		| head::tail -> generate tail (acc @ [generate_complementary_nucleobase (extract_nucleobase head)])
+	in generate helix []
 
 
+
+
+
+let print_helix helix =
+	print_endline (helix_to_string helix)
+
+let print_rna rna =
+	let rec print r acc =
+		match r with
+		| [] -> print_endline acc
+		| head::tail -> print tail (acc ^ (string_of_nucleobase head))
+	in print rna ""
 
 let () =
-	let print_helix helix =
-		print_endline (helix_to_string helix)
-	in let helix10 = generate_helix 10
+	let helix10 = generate_helix 10
 	in print_helix helix10 ;
-	print_helix (complementary_helix helix10)
+
+	let rna_helix10 = generate_rna helix10
+	in print_rna rna_helix10
