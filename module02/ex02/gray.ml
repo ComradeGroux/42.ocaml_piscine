@@ -38,7 +38,6 @@ let gray n =
 	in print_list (create_gray n)
 
 let () = 
-	gray 0;
 	gray 1;
 	gray 2;
 	gray 3;
