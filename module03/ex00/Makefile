@@ -14,10 +14,12 @@ DEP_FILE = $(BUILD_DIR)/.depend
 
 SRCS_DIR = src
 BUILD_DIR = build
+OPT_DIR = opt
+BYT_DIR = byt
 
 SRCS = $(wildcard $(SRCS_DIR)/*.ml)
-OPTOBJS = $(patsubst $(SRCS_DIR)/%.ml, $(BUILD_DIR)/%.cmx, $(SRCS))
-OBJS = $(patsubst $(SRCS_DIR)/%.ml, $(BUILD_DIR)/%.cmo, $(SRCS))
+OPTOBJS = $(patsubst $(SRCS_DIR)/%.ml, $(BUILD_DIR)/$(OPT_DIR)/%.cmx, $(SRCS))
+BYTOBJS = $(patsubst $(SRCS_DIR)/%.ml, $(BUILD_DIR)/$(BYT_DIR)/%.cmo, $(SRCS))
 
 FLAGS = -I $(BUILD_DIR)
 
@@ -51,23 +53,25 @@ $(NAME).opt: $(OPTOBJS)
 	@$(CAMLOPT) $(FLAGS) -o $@ $^
 	@printf "$(GREEN)  ✓ $(NAME).opt ready$(RESET)\n"
 
-$(BUILD_DIR)/%.cmx: $(SRCS_DIR)/%.ml | $(BUILD_DIR)/.opt_start
+$(BUILD_DIR)/$(OPT_DIR)/%.cmx: $(SRCS_DIR)/%.ml | $(BUILD_DIR)/.opt_start
 	@printf "$(GRAY)  $<...$(RESET)" && \
 	 $(CAMLOPT) $(FLAGS) -c -o $@ $< && \
 	 printf "$(ERASE)$(GREEN)  ✓ $<$(RESET)\n"
 
-$(NAME).byt: $(OBJS)
+$(NAME).byt: $(BYTOBJS)
 	@printf "$(BOLD)Linking $(NAME).byt$(RESET)\n"
 	@$(CAMLC) $(FLAGS) -o $@ $^
 	@printf "$(GREEN)  ✓ $(NAME).byt ready$(RESET)\n"
 
-$(BUILD_DIR)/%.cmo: $(SRCS_DIR)/%.ml | $(BUILD_DIR)/.byt_start
+$(BUILD_DIR)/$(BYT_DIR)/%.cmo: $(SRCS_DIR)/%.ml | $(BUILD_DIR)/.byt_start
 	@printf "$(GRAY)  $<...$(RESET)" && \
 	 $(CAMLC) $(FLAGS) -c -o $@ $< && \
 	 printf "$(ERASE)$(GREEN)  ✓ $<$(RESET)\n"
 
 $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BUILD_DIR)/$(OPT_DIR)
+	@mkdir -p $(BUILD_DIR)/$(BYT_DIR)
 
 clean:
 	@printf "$(BOLD)$(BLUE)Cleaning $(NAME) objects...$(RESET)\n"
