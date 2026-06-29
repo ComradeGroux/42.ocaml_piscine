@@ -37,3 +37,6 @@ _opam/
 
 *txt
 a.out
+a.out.byt
+a.out.opt
+build
