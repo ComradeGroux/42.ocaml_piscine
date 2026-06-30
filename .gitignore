@@ -36,6 +36,7 @@ setup.log
 _opam/
 
 *txt
+*.pdf
 a.out
 a.out.byt
 a.out.opt
