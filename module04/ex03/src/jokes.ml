@@ -10,11 +10,7 @@ let extract_jokes file =
 		with End_of_file -> ()
 	end;
 	close_in ifd ;
-	Array.of_list (List.rev !lst)
-
-let main jokes =
-	print_endline jokes.((Random.int (Array.length jokes)))
-
+	Array.of_list !lst
 
 let checking_arg argv =
 	if Array.length argv <> 2 then
@@ -28,4 +24,5 @@ let () =
 		| Invalid_argument msg -> prerr_endline msg ; exit 1
 	end;
 	Random.self_init ();
-	main (extract_jokes Sys.argv.(1))
+	let jokes = extract_jokes Sys.argv.(1) in
+	print_endline jokes.((Random.int (Array.length jokes)))
