@@ -10,7 +10,7 @@ let eu_dist p1 p2 =
 	for i = 0 to !n do
 		d := !d +. ((p1.(i) -. p2.(i)) ** 2.0)
 	done;
-	!d
+	Float.sqrt !d
 
 let () =
 	print_float (eu_dist [| 1.0 ; 3.0 |] [| 2.0 ; 1.0 |]) ; print_newline () ;
