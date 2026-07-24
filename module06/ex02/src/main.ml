@@ -13,4 +13,9 @@ let () =
 	print_endline "------------------";
 	doc#die ;
 	dal#exterminate hum;
-
+	print_endline dal#to_string;
+	print_endline doc#to_string;
+	doc#take_damage 42;
+	print_endline doc#to_string;
+	doc#should_regen;
+	print_endline doc#to_string;
