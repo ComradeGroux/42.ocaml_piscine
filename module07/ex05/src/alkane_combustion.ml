@@ -12,8 +12,8 @@ class alkane_combustion (start : Alkane.alkane list) =
 						end else
 							regroup_duplicate tail (((head :> Molecule.molecule), 1)::acc)
 	in let alkanes_molecules = regroup_duplicate (start :> Molecule.molecule list) []
-	in let reg_start = (((new Molecule.dioxygen) :> Molecule.molecule), 1)::alkanes_molecules
-	in let finish = [(((new Molecule.carbon_dioxide) :> Molecule.molecule), 1) ; (((new Molecule.water) :> Molecule.molecule), 1)]
+	in let reg_start = (((new Molecule.dioxygen) :> Molecule.molecule), 0)::alkanes_molecules
+	in let finish = [(((new Molecule.carbon_dioxide) :> Molecule.molecule), 0) ; (((new Molecule.water) :> Molecule.molecule), 0)]
 	in object (self)
 		inherit Reaction.reaction reg_start finish as super
 
@@ -27,6 +27,7 @@ class alkane_combustion (start : Alkane.alkane list) =
 				finish
 			else
 				raise (Failure "Reaction is not balanced")
+		method get_super_start = super#get_start
 
 		method balance =
 			let atoms = self#get_every_atoms_combined
@@ -80,9 +81,9 @@ class alkane_combustion (start : Alkane.alkane list) =
 			in let min_o2 = if total_hydrogen mod 4 != 0 then min_o2 + 1 else min_o2
 			in let max_o2 = total_carbon + total_hydrogen / 4
 			in let rec calculate_results o2_quantity res =
-				if o2_quantity = max_o2 then
+				if o2_quantity > max_o2 then
 					res
-				else begin
+				else
 					let dispo_oxygen = (o2_quantity * 2) - coeff_h2o
 					in let rec found_solutions coeff_co2 results =
 						if coeff_co2 = total_carbon then
@@ -93,24 +94,23 @@ class alkane_combustion (start : Alkane.alkane list) =
 							in if (coeff_co >= 0 && coeff_c >= 0) then
 								if (coeff_co = 0 && coeff_c = 0) then
 									found_solutions (coeff_co2 + 1) results
-								else begin
+								else
 									let reaction_lst = [((new Molecule.water :> Molecule.molecule), coeff_h2o)]
-									in let reaction_lst = match coeff_co2 with
-									| 0 -> reaction_lst
-									| _ -> (((new Molecule.carbon_dioxide :> Molecule.molecule), coeff_co2)::reaction_lst)
-									in let reaction_lst = match coeff_co with
-									| 0 -> reaction_lst
-									| _ -> (((new Molecule.carbon_monoxide :> Molecule.molecule), coeff_co)::reaction_lst)
 									in let reaction_lst = match coeff_c with
 									| 0 -> reaction_lst
 									| _ -> (((new Molecule.carbon :> Molecule.molecule), coeff_c)::reaction_lst)
+									in let reaction_lst = match coeff_co with
+									| 0 -> reaction_lst
+									| _ -> (((new Molecule.carbon_monoxide :> Molecule.molecule), coeff_co)::reaction_lst)
+									in let reaction_lst = match coeff_co2 with
+									| 0 -> reaction_lst
+									| _ -> (((new Molecule.carbon_dioxide :> Molecule.molecule), coeff_co2)::reaction_lst)
 									in found_solutions (coeff_co2 + 1) ((o2_quantity , reaction_lst)::results)
-								end
 							else
 								found_solutions (coeff_co2 + 1) results
 						end
 					in let curr_reactions = found_solutions 0 []
 					in calculate_results (o2_quantity + 1) (curr_reactions@res)
-				end
-			in calculate_results min_o2 []
+			in let results = calculate_results min_o2 []
+			in List.rev results
 end
